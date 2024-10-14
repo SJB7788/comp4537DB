@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 
 const server = http.createServer((req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.url == "/") {
     const indexHtml = fs.readFileSync("./public/index.html");
     res.writeHead(200, {
@@ -17,7 +17,7 @@ const server = http.createServer((req, res) => {
       case "/css/style.css":
         const css = fs.readFileSync("./public/css/style.css");
         res.writeHead(200, { "Content-Type": "text/css" });
-        res.end(css)
+        res.end(css);
     }
   }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/style.css" />
-    <script src="js/index.js" defer></script>
+    <script src="js/index.js" type="module" defer></script>
     <title>COMP 4537 Lab 5</title>
   </head>
   <body>
@@ -25,6 +25,10 @@
     <div id="query_container">
       <h2>Query</h2>
       <textarea id="query_text_area" type="text"></textarea>
+      <select id="request_type" name="request_type">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+      </select>
       <button id="queryButton">Query</button>
       <div>
         <p id="query_response"></p>

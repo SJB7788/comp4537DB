@@ -20,8 +20,14 @@ body {
     width: 500px;
     border-radius: 5px;
     border: 1px black solid;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     resize: none;
+}
+
+#query_container > select {
+    font-size: 1em;
+    width: 80px;
+    margin-bottom: 20px;
 }
 
 #query_container > button {

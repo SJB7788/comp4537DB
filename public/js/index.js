@@ -2,7 +2,7 @@ class SendRequest {
   constructor() {}
 
   async sendInsertRequest(json) {
-    const response = await fetch("url", {
+    const response = await fetch("http://localhost:8000/insert", {
       method: "POST",
       body: json,
       headers: { "Content-Type": "application/json" },
@@ -12,15 +12,21 @@ class SendRequest {
     return myJson;
   }
 
-  async sendQueryRequest(json) {
-    const response = await fetch("url", {
-      method: "GET",
-      body: json,
+  async sendQueryPostRequest(json) {
+    const response = await fetch("http://localhost:8000/query", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(json)
     });
 
     const myJson = await response.json();
     return myJson;
+  }
+
+  async sendQueryGetRequest(arg) {
+    const response = await fetch(`http://localhost:8000/query?query=${arg}`);
+    const jsonRes = await response.json();
+    return jsonRes;
   }
 }
 
@@ -36,19 +42,18 @@ class FormatIndex {
   }
 
   async insertForm() {
-    const jsonBody = {
-      "Sara Brown": "1901-01-01",
-      "John Smith": "1941-01-01",
-      "Jack Ma": "1961-01-30",
-      "Elon Musk": "1999-01-01",
-    };
-
     this.insertButton.addEventListener("click", async () => {
+      const jsonBody = {
+        "Sara Brown": "1901-01-01",
+        "John Smith": "1941-01-01",
+        "Jack Ma": "1961-01-30",
+        "Elon Musk": "1999-01-01"
+      };
       const response = await this.request.sendInsertRequest(
-        JSON.parse(jsonBody)
+        JSON.stringify(jsonBody)
       );
       if (response) {
-        this.insertResults.innerHTML = JSON.stringify(response);
+        this.insertResults.innerHTML = response;
       } else {
         this.insertResults.innerHTML = "Something went wrong!";
       }
@@ -56,22 +61,39 @@ class FormatIndex {
   }
 
   async requestForm() {
-    const queryTextArea = document.getElementById("query_text_area");
-    const queryString = queryTextArea.value;
-
-    const jsonBody = {
-      query: queryString,
-    };
-
     this.queryButton.addEventListener("click", async () => {
-      const response = await this.request.sendInsertRequest(
-        JSON.parse(jsonBody)
-      );
-      if (response) {
-        this.queryResults.innerHTML = JSON.stringify(response);
-      } else {
-        this.queryResults.innerHTML = "Something went wrong!";
+      const queryTextArea = document.getElementById("query_text_area");
+      const queryString = queryTextArea.value;
+      const requestType = document.getElementById("request_type").value;
+
+      switch (requestType) {
+        case "GET":
+          const getResponse = await this.request.sendQueryGetRequest(
+            queryString
+          );
+          if (getResponse) {
+            this.queryResults.innerHTML = JSON.stringify(getResponse);
+          } else {
+            this.queryResults.innerHTML = "Something went wrong!";
+          }
+          return;
+        case "POST":
+          const jsonBody = {
+            "query": queryString,
+          };
+          
+          const postResponse = await this.request.sendQueryPostRequest(JSON.stringify(jsonBody));
+          if (postResponse) {
+            this.queryResults.innerHTML = JSON.stringify(postResponse);
+          } else {
+            this.queryResults.innerHTML = "Something went wrong!";
+          }
+          return;
       }
     });
   }
 }
+
+const format = new FormatIndex();
+await format.insertForm();
+await format.requestForm();
