@@ -2,7 +2,7 @@ class SendRequest {
   constructor() {}
 
   async sendInsertRequest(json) {
-    const response = await fetch("http://localhost:8000/insert", {
+    const response = await fetch("https://lab05-server-axb7bdebddb4b6d2.canadacentral-01.azurewebsites.net/insert", {
       method: "POST",
       body: json,
       headers: { "Content-Type": "application/json" },
@@ -13,10 +13,10 @@ class SendRequest {
   }
 
   async sendQueryPostRequest(json) {
-    const response = await fetch("http://localhost:8000/query", {
+    const response = await fetch("https://lab05-server-axb7bdebddb4b6d2.canadacentral-01.azurewebsites.net/query", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(json)
+      body: JSON.stringify(json),
     });
 
     const myJson = await response.json();
@@ -24,7 +24,9 @@ class SendRequest {
   }
 
   async sendQueryGetRequest(arg) {
-    const response = await fetch(`http://localhost:8000/query?query=${arg}`);
+    const response = await fetch(
+      `https://lab05-server-axb7bdebddb4b6d2.canadacentral-01.azurewebsites.net/query?query=${arg}`
+    );
     const jsonRes = await response.json();
     return jsonRes;
   }
@@ -44,10 +46,15 @@ class FormatIndex {
   async insertForm() {
     this.insertButton.addEventListener("click", async () => {
       const jsonBody = {
-        "Sara Brown": "1901-01-01",
-        "John Smith": "1941-01-01",
-        "Jack Ma": "1961-01-30",
-        "Elon Musk": "1999-01-01"
+        patients: [{"first_name": "Sara", "last_name": "Brown", 
+          dob: "1901-01-01", "address": "121 St 100 Ave", "phone_number": "7788554755", "email": "SaraBrown23@gmail.com"},
+        ,{"first_name": "John", "last_name": "Smith", 
+          dob: "1941-01-01", "address": "124 St 87 Ave", "phone_number": "6042335193", "email": "JohnSmith1234@gmail.com"},
+        ,{"first_name": "Jack", "last_name": "Ma", 
+          dob: "1961-01-30", "address": "91 St 1 Ave", "phone_number": "2564778563", "email": "JackMaAliExpress@gmail.com"},
+        ,{"first_name": "Elon", "last_name": "Musk", 
+          dob: "1999-01-01", "address": "0 St 0 Ave", "phone_number": "1234567789", "email": "twitter@gmail.com"}
+        ]
       };
       const response = await this.request.sendInsertRequest(
         JSON.stringify(jsonBody)
@@ -68,25 +75,34 @@ class FormatIndex {
 
       switch (requestType) {
         case "GET":
-          const getResponse = await this.request.sendQueryGetRequest(
-            queryString
-          );
-          if (getResponse) {
-            this.queryResults.innerHTML = JSON.stringify(getResponse);
-          } else {
-            this.queryResults.innerHTML = "Something went wrong!";
+          try {
+            const getResponse = await this.request.sendQueryGetRequest(
+              queryString
+            );
+            if (getResponse) {
+              this.queryResults.innerHTML = JSON.stringify(getResponse);
+            } else {
+              this.queryResults.innerHTML = "Something went wrong!";
+            }
+          } catch (error) {
+            console.error("Error:", error);
           }
           return;
         case "POST":
           const jsonBody = {
-            "query": queryString,
+            query: queryString,
           };
-          
-          const postResponse = await this.request.sendQueryPostRequest(JSON.stringify(jsonBody));
-          if (postResponse) {
-            this.queryResults.innerHTML = JSON.stringify(postResponse);
-          } else {
-            this.queryResults.innerHTML = "Something went wrong!";
+          try {
+            const postResponse = await this.request.sendQueryPostRequest(
+              JSON.stringify(jsonBody)
+            );
+            if (postResponse) {
+              this.queryResults.innerHTML = JSON.stringify(postResponse);
+            } else {
+              this.queryResults.innerHTML = "Something went wrong!";
+            }
+          } catch (error) {
+            console.error("Error: ", error);
           }
           return;
       }
